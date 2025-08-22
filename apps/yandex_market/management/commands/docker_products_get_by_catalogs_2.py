@@ -223,7 +223,7 @@ class YandexMarketScraper:
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--window-size=1920,1080")
-        options.add_argument(f'--proxy-server={random_proxy}')
+        # options.add_argument(f'--proxy-server={random_proxy}')
 
         # Sahifalarni tezroq yuklash uchun rasmlarni o'chirish
         prefs = {"profile.managed_default_content_settings.images": 2}
