@@ -1,0 +1,50 @@
+
+services:
+  # PostgreSQL ma'lumotlar bazasi servisi
+  postgres:
+    image: postgres:15-alpine
+    container_name: parser_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  # Redis servisi (Celery uchun)
+  redis:
+    image: redis:7-alpine
+    container_name: parser_redis
+
+  # Django ilovasi servisi
+  django_app:
+    build: .
+    container_name: parser_django_app
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  # Celery ishchisi (worker) servisi
+  celery_worker:
+    build: .
+    container_name: parser_celery_worker
+    command: celery -A core worker -l info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - django_app
+      - redis
+
+volumes:
+  postgres_data:

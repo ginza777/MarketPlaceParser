@@ -8,7 +8,7 @@ from fake_useragent import UserAgent
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
-from .models import Category, Product, Shop, Brand
+from .models import Category, Product
 from .proxies import proxy_list
 
 def parse_yandex_cards(html_content: str) -> List[Dict[str, Optional[str]]]:
