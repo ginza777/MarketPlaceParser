@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5432:5435"
 
   # Redis servisi (Celery uchun)
   redis:
@@ -26,7 +26,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8000:8034"
     env_file:
       - .env
     depends_on:
