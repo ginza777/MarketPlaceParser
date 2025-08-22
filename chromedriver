@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# --- Google Chrome o'rnatish ---
+echo "Google Chrome o'rnatilmoqda..."
+# Chrome repositoriyasini qo'shish uchun kerakli vositalarni o'rnatamiz
+sudo apt-get update
+sudo apt-get install -y wget gpg
+
+# Google'ning rasmiy GPG kalitini yuklab olamiz
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg
+
+# Chrome repositoriyasini tizimga qo'shamiz
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
+# Paketlar ro'yxatini yangilab, Chrome'ni o'rnatamiz
+sudo apt-get update
+sudo apt-get install -y google-chrome-stable
+
+
+# --- Mos ChromeDriver'ni o'rnatish ---
+echo "ChromeDriver o'rnatilmoqda..."
+# 1. O'rnatilgan Chrome versiyasini aniqlaymiz
+CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f3 | cut -d'.' -f1-3)
+echo "Chrome versiyasi: $CHROME_VERSION"
+
+# 2. Chrome for Testing JSON endpoint'laridan mos chromedriver versiyasini qidiramiz
+# Eng so'nggi mos keluvchi versiyani topish
+DRIVER_VERSION_URL="https://googlechromelabs.github.io/chrome-for-testing/latest-patch-versions-per-build.json"
+# curl va jq yordamida JSON'dan kerakli versiyani topamiz (jq o'rnatilgan bo'lishi kerak: sudo apt-get install jq)
+sudo apt-get install -y jq
+LATEST_DRIVER_VERSION=$(curl -s $DRIVER_VERSION_URL | jq -r ".builds[\"$CHROME_VERSION\"].version")
+
+if [ -z "$LATEST_DRIVER_VERSION" ]; then
+  echo "Xatolik: Chrome versiyasi $CHROME_VERSION uchun mos ChromeDriver topilmadi."
+  exit 1
+fi
+
+echo "Mos keluvchi ChromeDriver versiyasi: $LATEST_DRIVER_VERSION"
+
+# 3. ChromeDriver'ni yuklab olamiz va arxivdan chiqaramiz
+wget https://storage.googleapis.com/chrome-for-testing-public/$LATEST_DRIVER_VERSION/linux64/chromedriver-linux64.zip
+sudo apt-get install -y unzip
+unzip chromedriver-linux64.zip
+
+# 4. Uni tizim yo'liga (PATH) ko'chiramiz va ruxsat beramiz
+sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
+sudo chmod +x /usr/local/bin/chromedriver
+
+# 5. Keraksiz fayllarni o'chiramiz
+rm chromedriver-linux64.zip
+rm -rf chromedriver-linux64
+
+echo "✅ Google Chrome va mos ChromeDriver muvaffaqiyatli o'rnatildi!"
+chromedriver --version

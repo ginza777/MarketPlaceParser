@@ -25,8 +25,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # third
-    'django_elasticsearch_dsl',
-
     'django_celery_beat',
     'django_celery_results',
     'debug_toolbar',
@@ -35,9 +33,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "rosetta",
     # local
-    "apps.kuku_ai_bot",
-    "apps.webapp",
-    "apps.parsing",
+    "apps.birbir",
+    "apps.olchauz",
+    "apps.yandex_market",
 
 ]
 

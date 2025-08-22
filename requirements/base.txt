@@ -19,3 +19,14 @@ trio==0.30.0
 trio-websocket==0.12.2
 urllib3==2.4.0
 webdriver-manager==4.0.2
+django-environ
+django-jazzmin
+django-debug-toolbar
+djangorestframework
+drf_yasg
+django-cors-headers
+django-rosetta
+whitenoise
+django_prometheus
+tabulate
+colorlog
